@@ -1,207 +1,198 @@
-## Rails 6.0.3.2 (June 17, 2020) ##
+## Rails 6.0.3.2 (June 17, 2020)
 
-*   No changes.
+- No changes.
 
+## Rails 6.0.3.1 (May 18, 2020)
 
-## Rails 6.0.3.1 (May 18, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.3 (May 06, 2020)
 
+- No changes.
 
-## Rails 6.0.3 (May 06, 2020) ##
+## Rails 6.0.2.2 (March 19, 2020)
 
-*   No changes.
+- No changes.
 
+## Rails 6.0.3.2 (December 18, 2019)
 
-## Rails 6.0.2.2 (March 19, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.2 (December 13, 2019)
 
+- No changes.
 
-## Rails 6.0.2.1 (December 18, 2019) ##
+## Rails 6.0.1 (November 5, 2019)
 
-*   No changes.
+- No changes.
 
+## Rails 6.0.0 (August 16, 2019)
 
-## Rails 6.0.2 (December 13, 2019) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.0.rc2 (July 22, 2019)
 
+- No changes.
 
-## Rails 6.0.1 (November 5, 2019) ##
+## Rails 6.0.0.rc1 (April 24, 2019)
 
-*   No changes.
+- Type cast falsy boolean symbols on boolean attribute as false.
 
+  Fixes #35676.
 
-## Rails 6.0.0 (August 16, 2019) ##
+  _Ryuta Kamizono_
 
-*   No changes.
+- Change how validation error translation strings are fetched: The new behavior
+  will first try the more specific keys, including doing locale fallback, then try
+  the less specific ones.
 
+  For example, this is the order in which keys will now be tried for a `blank`
+  error on a `product`'s `title` attribute with current locale set to `en-US`:
 
-## Rails 6.0.0.rc2 (July 22, 2019) ##
+      en-US.activerecord.errors.models.product.attributes.title.blank
+      en-US.activerecord.errors.models.product.blank
+      en-US.activerecord.errors.messages.blank
 
-*   No changes.
+      en.activerecord.errors.models.product.attributes.title.blank
+      en.activerecord.errors.models.product.blank
+      en.activerecord.errors.messages.blank
 
+      en-US.errors.attributes.title.blank
+      en-US.errors.messages.blank
 
-## Rails 6.0.0.rc1 (April 24, 2019) ##
+      en.errors.attributes.title.blank
+      en.errors.messages.blank
 
-*   Type cast falsy boolean symbols on boolean attribute as false.
+  _Hugo Vacher_
 
-    Fixes #35676.
+## Rails 6.0.0.beta3 (March 11, 2019)
 
-    *Ryuta Kamizono*
+- No changes.
 
-*   Change how validation error translation strings are fetched: The new behavior
-    will first try the more specific keys, including doing locale fallback, then try
-    the less specific ones.
+## Rails 6.0.0.beta2 (February 25, 2019)
 
-    For example, this is the order in which keys will now be tried for a `blank`
-    error on a `product`'s `title` attribute with current locale set to `en-US`:
+- Fix date value when casting a multiparameter date hash to not convert
+  from Gregorian date to Julian date.
 
-        en-US.activerecord.errors.models.product.attributes.title.blank
-        en-US.activerecord.errors.models.product.blank
-        en-US.activerecord.errors.messages.blank
+  Before:
 
-        en.activerecord.errors.models.product.attributes.title.blank
-        en.activerecord.errors.models.product.blank
-        en.activerecord.errors.messages.blank
+      Day.new({"day(1i)"=>"1", "day(2i)"=>"1", "day(3i)"=>"1"})
+      # => #<Day id: nil, day: "0001-01-03", created_at: nil, updated_at: nil>
 
-        en-US.errors.attributes.title.blank
-        en-US.errors.messages.blank
+  After:
 
-        en.errors.attributes.title.blank
-        en.errors.messages.blank
+      Day.new({"day(1i)"=>"1", "day(2i)"=>"1", "day(3i)"=>"1"})
+      # => #<Day id: nil, day: "0001-01-01", created_at: nil, updated_at: nil>
 
-    *Hugo Vacher*
+  Fixes #28521.
 
+  _Sayan Chakraborty_
 
-## Rails 6.0.0.beta3 (March 11, 2019) ##
+- Fix year value when casting a multiparameter time hash.
 
-*   No changes.
+  When assigning a hash to a time attribute that's missing a year component
+  (e.g. a `time_select` with `:ignore_date` set to `true`) then the year
+  defaults to 1970 instead of the expected 2000. This results in the attribute
+  changing as a result of the save.
 
+  Before:
 
-## Rails 6.0.0.beta2 (February 25, 2019) ##
+  ```
+  event = Event.new(start_time: { 4 => 20, 5 => 30 })
+  event.start_time # => 1970-01-01 20:30:00 UTC
+  event.save
+  event.reload
+  event.start_time # => 2000-01-01 20:30:00 UTC
+  ```
 
-*   Fix date value when casting a multiparameter date hash to not convert
-    from Gregorian date to Julian date.
+  After:
 
-    Before:
+  ```
+  event = Event.new(start_time: { 4 => 20, 5 => 30 })
+  event.start_time # => 2000-01-01 20:30:00 UTC
+  event.save
+  event.reload
+  event.start_time # => 2000-01-01 20:30:00 UTC
+  ```
 
-        Day.new({"day(1i)"=>"1", "day(2i)"=>"1", "day(3i)"=>"1"})
-        # => #<Day id: nil, day: "0001-01-03", created_at: nil, updated_at: nil>
+  _Andrew White_
 
-    After:
+## Rails 6.0.0.beta1 (January 18, 2019)
 
-        Day.new({"day(1i)"=>"1", "day(2i)"=>"1", "day(3i)"=>"1"})
-        # => #<Day id: nil, day: "0001-01-01", created_at: nil, updated_at: nil>
+- Internal calls to `human_attribute_name` on an `Active Model` now pass attributes as strings instead of symbols
+  in some cases.
 
-    Fixes #28521.
+  This is in line with examples in Rails docs and puts the code in line with the intention -
+  the potential use of strings or symbols.
 
-    *Sayan Chakraborty*
+  It is recommended to cast the attribute input to your desired type as if you you are overriding that methid.
 
-*   Fix year value when casting a multiparameter time hash.
+  _Martin Larochelle_
 
-    When assigning a hash to a time attribute that's missing a year component
-    (e.g. a `time_select` with `:ignore_date` set to `true`) then the year
-    defaults to 1970 instead of the expected 2000. This results in the attribute
-    changing as a result of the save.
+- Add `ActiveModel::Errors#of_kind?`.
 
-    Before:
-    ```
-    event = Event.new(start_time: { 4 => 20, 5 => 30 })
-    event.start_time # => 1970-01-01 20:30:00 UTC
-    event.save
-    event.reload
-    event.start_time # => 2000-01-01 20:30:00 UTC
-    ```
+  _bogdanvlviv_, _Rafael Mendonça França_
 
-    After:
-    ```
-    event = Event.new(start_time: { 4 => 20, 5 => 30 })
-    event.start_time # => 2000-01-01 20:30:00 UTC
-    event.save
-    event.reload
-    event.start_time # => 2000-01-01 20:30:00 UTC
-    ```
+- Fix numericality equality validation of `BigDecimal` and `Float`
+  by casting to `BigDecimal` on both ends of the validation.
 
-    *Andrew White*
+  _Gannon McGibbon_
 
+- Add `#slice!` method to `ActiveModel::Errors`.
 
-## Rails 6.0.0.beta1 (January 18, 2019) ##
+  _Daniel López Prat_
 
-*   Internal calls to `human_attribute_name` on an `Active Model` now pass attributes as strings instead of symbols
-    in some cases.
+- Fix numericality validator to still use value before type cast except Active Record.
 
-    This is in line with examples in Rails docs and puts the code in line with the intention -
-    the potential use of strings or symbols.
+  Fixes #33651, #33686.
 
-    It is recommended to cast the attribute input to your desired type as if you you are overriding that methid.
+  _Ryuta Kamizono_
 
-    *Martin Larochelle*
+- Fix `ActiveModel::Serializers::JSON#as_json` method for timestamps.
 
-*   Add `ActiveModel::Errors#of_kind?`.
+  Before:
 
-    *bogdanvlviv*, *Rafael Mendonça França*
+  ```
+  contact = Contact.new(created_at: Time.utc(2006, 8, 1))
+  contact.as_json["created_at"] # => 2006-08-01 00:00:00 UTC
+  ```
 
-*   Fix numericality equality validation of `BigDecimal` and `Float`
-    by casting to `BigDecimal` on both ends of the validation.
+  After:
 
-    *Gannon McGibbon*
+  ```
+  contact = Contact.new(created_at: Time.utc(2006, 8, 1))
+  contact.as_json["created_at"] # => "2006-08-01T00:00:00.000Z"
+  ```
 
-*   Add `#slice!` method to `ActiveModel::Errors`.
+  _Bogdan Gusiev_
 
-    *Daniel López Prat*
+- Allows configurable attribute name for `#has_secure_password`. This
+  still defaults to an attribute named 'password', causing no breaking
+  change. There is a new method `#authenticate_XXX` where XXX is the
+  configured attribute name, making the existing `#authenticate` now an
+  alias for this when the attribute is the default 'password'.
 
-*   Fix numericality validator to still use value before type cast except Active Record.
+  Example:
 
-    Fixes #33651, #33686.
+      class User < ActiveRecord::Base
+        has_secure_password :recovery_password, validations: false
+      end
 
-    *Ryuta Kamizono*
+      user = User.new()
+      user.recovery_password = "42password"
+      user.recovery_password_digest # => "$2a$04$iOfhwahFymCs5weB3BNH/uX..."
+      user.authenticate_recovery_password('42password') # => user
 
-*   Fix `ActiveModel::Serializers::JSON#as_json` method for timestamps.
+  _Unathi Chonco_
 
-    Before:
-    ```
-    contact = Contact.new(created_at: Time.utc(2006, 8, 1))
-    contact.as_json["created_at"] # => 2006-08-01 00:00:00 UTC
-    ```
+- Add `config.active_model.i18n_customize_full_message` in order to control whether
+  the `full_message` error format can be overridden at the attribute or model
+  level in the locale files. This is `false` by default.
 
-    After:
-    ```
-    contact = Contact.new(created_at: Time.utc(2006, 8, 1))
-    contact.as_json["created_at"] # => "2006-08-01T00:00:00.000Z"
-    ```
+  _Martin Larochelle_
 
-    *Bogdan Gusiev*
+- Rails 6 requires Ruby 2.5.0 or newer.
 
-*   Allows configurable attribute name for `#has_secure_password`. This
-    still defaults to an attribute named 'password', causing no breaking
-    change. There is a new method `#authenticate_XXX` where XXX is the
-    configured attribute name, making the existing `#authenticate` now an
-    alias for this when the attribute is the default 'password'.
-
-    Example:
-
-        class User < ActiveRecord::Base
-          has_secure_password :recovery_password, validations: false
-        end
-
-        user = User.new()
-        user.recovery_password = "42password"
-        user.recovery_password_digest # => "$2a$04$iOfhwahFymCs5weB3BNH/uX..."
-        user.authenticate_recovery_password('42password') # => user
-
-    *Unathi Chonco*
-
-*   Add `config.active_model.i18n_customize_full_message` in order to control whether
-    the `full_message` error format can be overridden at the attribute or model
-    level in the locale files. This is `false` by default.
-
-    *Martin Larochelle*
-
-*   Rails 6 requires Ruby 2.5.0 or newer.
-
-    *Jeremy Daer*, *Kasper Timm Hansen*
-
+  _Jeremy Daer_, _Kasper Timm Hansen_
 
 Please check [5-2-stable](https://github.com/rails/rails/blob/5-2-stable/activemodel/CHANGELOG.md) for previous changes.

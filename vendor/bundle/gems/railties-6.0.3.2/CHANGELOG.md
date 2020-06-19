@@ -1,515 +1,505 @@
-## Rails 6.0.3.2 (June 17, 2020) ##
+## Rails 6.0.3.2 (June 17, 2020)
 
-*   No changes.
+- No changes.
 
+## Rails 6.0.3.1 (May 18, 2020)
 
-## Rails 6.0.3.1 (May 18, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.3 (May 06, 2020)
 
+- Cache compiled view templates when running tests by default
 
-## Rails 6.0.3 (May 06, 2020) ##
+  When generating a new app without `--skip-spring`, caching classes is
+  disabled in `environments/test.rb`. This implicitly disables caching
+  view templates too. This change will enable view template caching by
+  adding this to the generated `environments/test.rb`:
 
-*   Cache compiled view templates when running tests by default
+  ```ruby
+  config.action_view.cache_template_loading = true
+  ```
 
-    When generating a new app without `--skip-spring`, caching classes is
-    disabled in `environments/test.rb`. This implicitly disables caching
-    view templates too. This change will enable view template caching by
-    adding this to the generated `environments/test.rb`:
+  _Jorge Manrubia_
 
-    ````ruby
-    config.action_view.cache_template_loading = true
-    ````
+- `Rails::Application#eager_load!` is available again to load application code
+  manually as it was possible in previous versions.
 
-    *Jorge Manrubia*
+  Please, note this is not integrated with the whole eager loading logic that
+  runs when Rails boots with eager loading enabled, you can think of this
+  method as a vanilla recursive code loader.
 
-*   `Rails::Application#eager_load!` is available again to load application code
-    manually as it was possible in previous versions.
+  This ability has been restored because there are some use cases for it, such
+  as indexers that need to have all application classes and modules in memory.
 
-    Please, note this is not integrated with the whole eager loading logic that
-    runs when Rails boots with eager loading enabled, you can think of this
-    method as a vanilla recursive code loader.
+  _Xavier Noria_
 
-    This ability has been restored because there are some use cases for it, such
-    as indexers that need to have all application classes and modules in memory.
+- Generators that inherit from NamedBase respect `--force` option
 
-    *Xavier Noria*
+  _Josh Brody_
 
-*   Generators that inherit from NamedBase respect `--force` option
+- Regression fix: The Rake task `zeitwerk:check` supports eager loaded
+  namespaces which do not have eager load paths, like the recently added
+  `i18n`. These namespaces are only required to respond to `eager_load!`.
 
-    *Josh Brody*
+  _Xavier Noria_
 
-*   Regression fix: The Rake task `zeitwerk:check` supports eager loaded
-    namespaces which do not have eager load paths, like the recently added
-    `i18n`. These namespaces are only required to respond to `eager_load!`.
+## Rails 6.0.2.2 (March 19, 2020)
 
-    *Xavier Noria*
+- No changes.
 
+## Rails 6.0.3.2 (December 18, 2019)
 
-## Rails 6.0.2.2 (March 19, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.2 (December 13, 2019)
 
+- Fix the collision check for the scaffold generator.
 
-## Rails 6.0.2.1 (December 18, 2019) ##
+  _Ryan Robeson_
 
-*   No changes.
+## Rails 6.0.1 (November 5, 2019)
 
+- The `zeitwerk:check` Rake task reports files outside the app's root
+  directory, as in engines loaded from gems.
 
-## Rails 6.0.2 (December 13, 2019) ##
+  _Xavier Noria_
 
-*   Fix the collision check for the scaffold generator.
+- Fixed a possible error when using the evented file update checker.
 
-    *Ryan Robeson*
+  _Yuji Yaginuma_
 
-## Rails 6.0.1 (November 5, 2019) ##
+- The sqlite3 database files created by the parallel testing feature are
+  included in the default `.gitignore` file for newly-generated apps.
 
-*   The `zeitwerk:check` Rake task reports files outside the app's root
-    directory, as in engines loaded from gems.
+  _Yasuo Honda_
 
-    *Xavier Noria*
+- `rails new` generates a `.keep` file in `tmp/pids`. This fixes starting
+  a server via `rackup` instead of `rails server`.
 
-*   Fixed a possible error when using the evented file update checker.
+  _Rafael Mendonça França_
 
-    *Yuji Yaginuma*
+## Rails 6.0.0 (August 16, 2019)
 
-*   The sqlite3 database files created by the parallel testing feature are
-    included in the default `.gitignore` file for newly-generated apps.
+- `Rails.autoloaders.log!` is a logging shortcut to get the activity of the
+  loaders printed to standard output. May be handy for troubleshooting.
 
-    *Yasuo Honda*
+  _Xavier Noria_
 
-*   `rails new` generates a `.keep` file in `tmp/pids`. This fixes starting
-    a server via `rackup` instead of `rails server`.
+## Rails 6.0.0.rc2 (July 22, 2019)
 
-    *Rafael Mendonça França*
+- The new configuration point `config.add_autoload_paths_to_load_path` allows
+  users to opt-out from adding autoload paths to `$LOAD_PATH`. This flag is
+  `true` by default, but it is recommended to be set to `false` in `:zeitwerk`
+  mode early, in `config/application.rb`.
 
+  Zeitwerk uses only absolute paths internally, and applications running in
+  `:zeitwerk` mode do not need `require_dependency`, so models, controllers,
+  jobs, etc. do not need to be in `$LOAD_PATH`. Setting this to `false` saves
+  Ruby from checking these directories when resolving `require` calls with
+  relative paths, and saves Bootsnap work and RAM, since it does not need to
+  build an index for them.
 
-## Rails 6.0.0 (August 16, 2019) ##
+  _Xavier Noria_
 
-*   `Rails.autoloaders.log!` is a logging shortcut to get the activity of the
-    loaders printed to standard output. May be handy for troubleshooting.
+## Rails 6.0.0.rc1 (April 24, 2019)
 
-    *Xavier Noria*
+- Applications upgrading to Rails 6 can run the command
 
+  ```
+  bin/rails zeitwerk:check
+  ```
 
-## Rails 6.0.0.rc2 (July 22, 2019) ##
+  to check if the project structure they were using with the classic
+  autoloader is compatible with `:zeitwerk` mode.
 
-*   The new configuration point `config.add_autoload_paths_to_load_path` allows
-    users to opt-out from adding autoload paths to `$LOAD_PATH`. This flag is
-    `true` by default, but it is recommended to be set to `false` in `:zeitwerk`
-    mode early, in `config/application.rb`.
+  _Matilda Smeds_ & _Xavier Noria_
 
-    Zeitwerk uses only absolute paths internally, and applications running in
-    `:zeitwerk` mode do not need `require_dependency`, so models, controllers,
-    jobs, etc. do not need to be in `$LOAD_PATH`. Setting this to `false` saves
-    Ruby from checking these directories when resolving `require` calls with
-    relative paths, and saves Bootsnap work and RAM, since it does not need to
-    build an index for them.
+- Allow loading seeds without ActiveJob.
 
-    *Xavier Noria*
+  Fixes #35782
 
-## Rails 6.0.0.rc1 (April 24, 2019) ##
+  _Jeremy Weathers_
 
-*   Applications upgrading to Rails 6 can run the command
+- `null: false` is set in the migrations by default for column pointed by
+  `belongs_to` / `references` association generated by model generator.
 
-    ```
-    bin/rails zeitwerk:check
-    ```
+  Also deprecate passing {required} to the model generator.
 
-    to check if the project structure they were using with the classic
-    autoloader is compatible with `:zeitwerk` mode.
+  _Prathamesh Sonpatki_
 
-    *Matilda Smeds* & *Xavier Noria*
+- New applications get `config.cache_classes = false` in `config/environments/test.rb`
+  unless `--skip-spring`.
 
-*   Allow loading seeds without ActiveJob.
+  _Xavier Noria_
 
-    Fixes #35782
+- Autoloading during initialization is deprecated.
 
-    *Jeremy Weathers*
+  _Xavier Noria_
 
-*   `null: false` is set in the migrations by default for column pointed by
-    `belongs_to` / `references` association generated by model generator.
+- Only force `:async` ActiveJob adapter to `:inline` during seeding.
 
-    Also deprecate passing {required} to the model generator.
+  _BatedUrGonnaDie_
 
-    *Prathamesh Sonpatki*
+- The `connection` option of `rails dbconsole` command is deprecated in
+  favor of `database` option.
 
-*   New applications get `config.cache_classes = false` in `config/environments/test.rb`
-    unless `--skip-spring`.
+  _Yuji Yaginuma_
 
-    *Xavier Noria*
+- Replace `chromedriver-helper` gem with `webdrivers` in default Gemfile.
+  `chromedriver-helper` is deprecated as of March 31, 2019 and won't
+  receive any further updates.
 
-*   Autoloading during initialization is deprecated.
+  _Guillermo Iguaran‮_
 
-    *Xavier Noria*
+- Applications running in `:zeitwerk` mode that use `bootsnap` need
+  to upgrade `bootsnap` to at least 1.4.2.
 
-*   Only force `:async` ActiveJob adapter to `:inline` during seeding.
+  _Xavier Noria_
 
-    *BatedUrGonnaDie*
+- Add `config.disable_sandbox` option to Rails console.
 
-*   The `connection` option of `rails dbconsole` command is deprecated in
-    favor of `database` option.
+  This setting will disable `rails console --sandbox` mode, preventing
+  developer from accidentally starting a sandbox console,
+  which when left inactive, can cause the database server to run out of memory.
 
-    *Yuji Yaginuma*
+  _Prem Sichanugrist_
 
-*   Replace `chromedriver-helper` gem with `webdrivers` in default Gemfile.
-    `chromedriver-helper` is deprecated as of March 31, 2019 and won't
-    receive any further updates.
+- Add `-e/--environment` option to `rails initializers`.
 
-    *Guillermo Iguaran‮*
+  _Yuji Yaginuma_
 
-*   Applications running in `:zeitwerk` mode that use `bootsnap` need
-    to upgrade `bootsnap` to at least 1.4.2.
+## Rails 6.0.0.beta3 (March 11, 2019)
 
-    *Xavier Noria*
+- Generate random development secrets
 
-*   Add `config.disable_sandbox` option to Rails console.
+  A random development secret is now generated to tmp/development_secret.txt
 
-    This setting will disable `rails console --sandbox` mode, preventing
-    developer from accidentally starting a sandbox console,
-    which when left inactive, can cause the database server to run out of memory.
+  This avoids an issue where development mode servers were vulnerable to
+  remote code execution.
 
-    *Prem Sichanugrist*
+  Fixes CVE-2019-5420
 
-*   Add `-e/--environment` option to `rails initializers`.
+  _Eileen M. Uchitelle_, _Aaron Patterson_, _John Hawthorn_
 
-    *Yuji Yaginuma*
+## Rails 6.0.0.beta2 (February 25, 2019)
 
+- Fix non-symbol access to nested hashes returned from `Rails::Application.config_for`
+  being broken by allowing non-symbol access with a deprecation notice.
 
-## Rails 6.0.0.beta3 (March 11, 2019) ##
+  _Ufuk Kayserilioglu_
 
-*   Generate random development secrets
+- Fix deeply nested namespace command printing.
 
-    A random development secret is now generated to tmp/development_secret.txt
+  _Gannon McGibbon_
 
-    This avoids an issue where development mode servers were vulnerable to
-    remote code execution.
+## Rails 6.0.0.beta1 (January 18, 2019)
 
-    Fixes CVE-2019-5420
+- Remove deprecated `after_bundle` helper inside plugins templates.
 
-    *Eileen M. Uchitelle*, *Aaron Patterson*, *John Hawthorn*
+  _Rafael Mendonça França_
 
+- Remove deprecated support to old `config.ru` that use the application class as argument of `run`.
 
-## Rails 6.0.0.beta2 (February 25, 2019) ##
+  _Rafael Mendonça França_
 
-*   Fix non-symbol access to nested hashes returned from `Rails::Application.config_for`
-    being broken by allowing non-symbol access with a deprecation notice.
+- Remove deprecated `environment` argument from the rails commands.
 
-    *Ufuk Kayserilioglu*
+  _Rafael Mendonça França_
 
-*   Fix deeply nested namespace command printing.
+- Remove deprecated `capify!`.
 
-    *Gannon McGibbon*
+  _Rafael Mendonça França_
 
+- Remove deprecated `config.secret_token`.
 
-## Rails 6.0.0.beta1 (January 18, 2019) ##
+  _Rafael Mendonça França_
 
-*   Remove deprecated `after_bundle` helper inside plugins templates.
+- Seed database with inline ActiveJob job adapter.
 
-    *Rafael Mendonça França*
+  _Gannon McGibbon_
 
-*   Remove deprecated support to old `config.ru` that use the application class as argument of `run`.
+- Add `rails db:system:change` command for changing databases.
 
-    *Rafael Mendonça França*
+  ```
+  bin/rails db:system:change --to=postgresql
+     force  config/database.yml
+      gsub  Gemfile
+  ```
 
-*   Remove deprecated `environment` argument from the rails commands.
+  The change command copies a template `config/database.yml` with
+  the target database adapter into your app, and replaces your database gem
+  with the target database gem.
 
-    *Rafael Mendonça França*
+  _Gannon McGibbon_
 
-*   Remove deprecated `capify!`.
+- Add `rails test:channels`.
 
-    *Rafael Mendonça França*
+  _bogdanvlviv_
 
-*   Remove deprecated `config.secret_token`.
+- Use original `bundler` environment variables during the process of generating a new rails project.
 
-    *Rafael Mendonça França*
+  _Marco Costa_
 
-*   Seed database with inline ActiveJob job adapter.
+- Send Active Storage analysis and purge jobs to dedicated queues by default.
 
-    *Gannon McGibbon*
+  Analysis jobs now use the `:active_storage_analysis` queue, and purge jobs
+  now use the `:active_storage_purge` queue. This matches Action Mailbox,
+  which sends its jobs to dedicated queues by default.
 
-*   Add `rails db:system:change` command for changing databases.
+  _George Claghorn_
 
-    ```
-    bin/rails db:system:change --to=postgresql
-       force  config/database.yml
-        gsub  Gemfile
-    ```
+- Add `rails test:mailboxes`.
 
-    The change command copies a template `config/database.yml` with
-    the target database adapter into your app, and replaces your database gem
-    with the target database gem.
+  _George Claghorn_
 
-    *Gannon McGibbon*
+- Introduce guard against DNS rebinding attacks.
 
-*   Add `rails test:channels`.
+  The `ActionDispatch::HostAuthorization` is a new middleware that prevents
+  against DNS rebinding and other `Host` header attacks. It is included in
+  the development environment by default with the following configuration:
 
-    *bogdanvlviv*
+      Rails.application.config.hosts = [
+        IPAddr.new("0.0.0.0/0"), # All IPv4 addresses.
+        IPAddr.new("::/0"),      # All IPv6 addresses.
+        "localhost"              # The localhost reserved domain.
+      ]
 
-*   Use original `bundler` environment variables during the process of generating a new rails project.
+  In other environments `Rails.application.config.hosts` is empty and no
+  `Host` header checks will be done. If you want to guard against header
+  attacks on production, you have to manually permit the allowed hosts
+  with:
 
-    *Marco Costa*
+      Rails.application.config.hosts << "product.com"
 
-*   Send Active Storage analysis and purge jobs to dedicated queues by default.
+  The host of a request is checked against the `hosts` entries with the case
+  operator (`#===`), which lets `hosts` support entries of type `Regexp`,
+  `Proc` and `IPAddr` to name a few. Here is an example with a regexp.
 
-    Analysis jobs now use the `:active_storage_analysis` queue, and purge jobs
-    now use the `:active_storage_purge` queue. This matches Action Mailbox,
-    which sends its jobs to dedicated queues by default.
+      # Allow requests from subdomains like `www.product.com` and
+      # `beta1.product.com`.
+      Rails.application.config.hosts << /.*\.product\.com/
 
-    *George Claghorn*
+  A special case is supported that allows you to permit all sub-domains:
 
-*   Add `rails test:mailboxes`.
+      # Allow requests from subdomains like `www.product.com` and
+      # `beta1.product.com`.
+      Rails.application.config.hosts << ".product.com"
 
-    *George Claghorn*
+  _Genadi Samokovarov_
 
-*   Introduce guard against DNS rebinding attacks.
+- Remove redundant suffixes on generated helpers.
 
-    The `ActionDispatch::HostAuthorization` is a new middleware that prevents
-    against DNS rebinding and other `Host` header attacks. It is included in
-    the development environment by default with the following configuration:
+  _Gannon McGibbon_
 
-        Rails.application.config.hosts = [
-          IPAddr.new("0.0.0.0/0"), # All IPv4 addresses.
-          IPAddr.new("::/0"),      # All IPv6 addresses.
-          "localhost"              # The localhost reserved domain.
-        ]
+- Remove redundant suffixes on generated integration tests.
 
-    In other environments `Rails.application.config.hosts` is empty and no
-    `Host` header checks will be done. If you want to guard against header
-    attacks on production, you have to manually permit the allowed hosts
-    with:
+  _Gannon McGibbon_
 
-        Rails.application.config.hosts << "product.com"
+- Fix boolean interaction in scaffold system tests.
 
-    The host of a request is checked against the `hosts` entries with the case
-    operator (`#===`), which lets `hosts` support entries of type `Regexp`,
-    `Proc` and `IPAddr` to name a few. Here is an example with a regexp.
+  _Gannon McGibbon_
 
-        # Allow requests from subdomains like `www.product.com` and
-        # `beta1.product.com`.
-        Rails.application.config.hosts << /.*\.product\.com/
+- Remove redundant suffixes on generated system tests.
 
-    A special case is supported that allows you to permit all sub-domains:
+  _Gannon McGibbon_
 
-        # Allow requests from subdomains like `www.product.com` and
-        # `beta1.product.com`.
-        Rails.application.config.hosts << ".product.com"
+- Add an `abort_on_failure` boolean option to the generator method that shell
+  out (`generate`, `rake`, `rails_command`) to abort the generator if the
+  command fails.
 
-    *Genadi Samokovarov*
+  _David Rodríguez_
 
-*   Remove redundant suffixes on generated helpers.
+- Remove `app/assets` and `app/javascript` from `eager_load_paths` and `autoload_paths`.
 
-    *Gannon McGibbon*
+  _Gannon McGibbon_
 
-*   Remove redundant suffixes on generated integration tests.
+- Use Ids instead of memory addresses when displaying references in scaffold views.
 
-    *Gannon McGibbon*
+  Fixes #29200.
 
-*   Fix boolean interaction in scaffold system tests.
+  _Rasesh Patel_
 
-    *Gannon McGibbon*
+- Adds support for multiple databases to `rails db:migrate:status`.
+  Subtasks are also added to get the status of individual databases (eg. `rails db:migrate:status:animals`).
 
-*   Remove redundant suffixes on generated system tests.
+  _Gannon McGibbon_
 
-    *Gannon McGibbon*
+- Use Webpacker by default to manage app-level JavaScript through the new app/javascript directory.
+  Sprockets is now solely in charge, by default, of compiling CSS and other static assets.
+  Action Cable channel generators will create ES6 stubs rather than use CoffeeScript.
+  Active Storage, Action Cable, Turbolinks, and Rails-UJS are loaded by a new application.js pack.
+  Generators no longer generate JavaScript stubs.
 
-*   Add an `abort_on_failure` boolean option to the generator method that shell
-    out (`generate`, `rake`, `rails_command`) to abort the generator if the
-    command fails.
+  _DHH_, _Lachlan Sylvester_
 
-    *David Rodríguez*
+- Add `database` (aliased as `db`) option to model generator to allow
+  setting the database. This is useful for applications that use
+  multiple databases and put migrations per database in their own directories.
 
-*   Remove `app/assets` and `app/javascript` from `eager_load_paths` and `autoload_paths`.
+  ```
+  bin/rails g model Room capacity:integer --database=kingston
+        invoke  active_record
+        create    db/kingston_migrate/20180830151055_create_rooms.rb
+  ```
 
-    *Gannon McGibbon*
+  Because rails scaffolding uses the model generator, you can
+  also specify a database with the scaffold generator.
 
-*   Use Ids instead of memory addresses when displaying references in scaffold views.
+  _Gannon McGibbon_
 
-    Fixes #29200.
+- Raise an error when "recyclable cache keys" are being used by a cache store
+  that does not explicitly support it. Custom cache keys that do support this feature
+  can bypass this error by implementing the `supports_cache_versioning?` method on their
+  class and returning a truthy value.
 
-    *Rasesh Patel*
+  _Richard Schneeman_
 
-*   Adds support for multiple databases to `rails db:migrate:status`.
-    Subtasks are also added to get the status of individual databases (eg. `rails db:migrate:status:animals`).
+- Support environment specific credentials overrides.
 
-    *Gannon McGibbon*
+  So any environment will look for `config/credentials/#{Rails.env}.yml.enc` and fall back
+  to `config/credentials.yml.enc`.
 
-*   Use Webpacker by default to manage app-level JavaScript through the new app/javascript directory.
-    Sprockets is now solely in charge, by default, of compiling CSS and other static assets.
-    Action Cable channel generators will create ES6 stubs rather than use CoffeeScript.
-    Active Storage, Action Cable, Turbolinks, and Rails-UJS are loaded by a new application.js pack.
-    Generators no longer generate JavaScript stubs.
+  The encryption key can be in `ENV["RAILS_MASTER_KEY"]` or `config/credentials/production.key`.
 
-    *DHH*, *Lachlan Sylvester*
+  Environment credentials overrides can be edited with `rails credentials:edit --environment production`.
+  If no override is set up for the passed environment, it will be created.
 
-*   Add `database` (aliased as `db`) option to model generator to allow
-    setting the database. This is useful for applications that use
-    multiple databases and put migrations per database in their own directories.
+  Additionally, the default lookup paths can be overwritten with these configs:
 
-    ```
-    bin/rails g model Room capacity:integer --database=kingston
-          invoke  active_record
-          create    db/kingston_migrate/20180830151055_create_rooms.rb
-    ```
+  - `config.credentials.content_path`
+  - `config.credentials.key_path`
 
-    Because rails scaffolding uses the model generator, you can
-    also specify a database with the scaffold generator.
+  _Wojciech Wnętrzak_
 
-    *Gannon McGibbon*
+- Make `ActiveSupport::Cache::NullStore` the default cache store in the test environment.
 
-*   Raise an error when "recyclable cache keys" are being used by a cache store
-    that does not explicitly support it. Custom cache keys that do support this feature
-    can bypass this error by implementing the `supports_cache_versioning?` method on their
-    class and returning a truthy value.
+  _Michael C. Nelson_
 
-    *Richard Schneeman*
+- Emit warning for unknown inflection rule when generating model.
 
-*   Support environment specific credentials overrides.
+  _Yoshiyuki Kinjo_
 
-    So any environment will look for `config/credentials/#{Rails.env}.yml.enc` and fall back
-    to `config/credentials.yml.enc`.
+- Add `database` (aliased as `db`) option to migration generator.
 
-    The encryption key can be in `ENV["RAILS_MASTER_KEY"]` or `config/credentials/production.key`.
+  If you're using multiple databases and have a folder for each database
+  for migrations (ex db/migrate and db/new_db_migrate) you can now pass the
+  `--database` option to the generator to make sure the the migration
+  is inserted into the correct folder.
 
-    Environment credentials overrides can be edited with `rails credentials:edit --environment production`.
-    If no override is set up for the passed environment, it will be created.
+  ```
+  rails g migration CreateHouses --database=kingston
+    invoke  active_record
+    create    db/kingston_migrate/20180830151055_create_houses.rb
+  ```
 
-    Additionally, the default lookup paths can be overwritten with these configs:
+  _Eileen M. Uchitelle_
 
-    - `config.credentials.content_path`
-    - `config.credentials.key_path`
+- Deprecate `rake routes` in favor of `rails routes`.
 
-    *Wojciech Wnętrzak*
+  _Yuji Yaginuma_
 
-*   Make `ActiveSupport::Cache::NullStore` the default cache store in the test environment.
+- Deprecate `rake initializers` in favor of `rails initializers`.
 
-    *Michael C. Nelson*
+  _Annie-Claude Côté_
 
-*   Emit warning for unknown inflection rule when generating model.
+- Deprecate `rake dev:cache` in favor of `rails dev:cache`.
 
-    *Yoshiyuki Kinjo*
+  _Annie-Claude Côté_
 
-*   Add `database` (aliased as `db`) option to migration generator.
+- Deprecate `rails notes` subcommands in favor of passing an `annotations` argument to `rails notes`.
 
-    If you're using multiple databases and have a folder for each database
-    for migrations (ex db/migrate and db/new_db_migrate) you can now pass the
-    `--database` option to the generator to make sure the the migration
-    is inserted into the correct folder.
+  The following subcommands are replaced by passing `--annotations` or `-a` to `rails notes`:
 
-    ```
-    rails g migration CreateHouses --database=kingston
-      invoke  active_record
-      create    db/kingston_migrate/20180830151055_create_houses.rb
-    ```
+  - `rails notes:custom ANNOTATION=custom` is deprecated in favor of using `rails notes -a custom`.
+  - `rails notes:optimize` is deprecated in favor of using `rails notes -a OPTIMIZE`.
+  - `rails notes:todo` is deprecated in favor of using`rails notes -a TODO`.
+  - `rails notes:fixme` is deprecated in favor of using `rails notes -a FIXME`.
 
-    *Eileen M. Uchitelle*
+  _Annie-Claude Côté_
 
-*   Deprecate `rake routes` in favor of `rails routes`.
+- Deprecate `SOURCE_ANNOTATION_DIRECTORIES` environment variable used by `rails notes`
+  through `Rails::SourceAnnotationExtractor::Annotation` in favor of using `config.annotations.register_directories`.
 
-    *Yuji Yaginuma*
+  _Annie-Claude Côté_
 
-*   Deprecate `rake initializers` in favor of `rails initializers`.
+- Deprecate `rake notes` in favor of `rails notes`.
 
-    *Annie-Claude Côté*
+  _Annie-Claude Côté_
 
-*   Deprecate `rake dev:cache` in favor of `rails dev:cache`.
+- Don't generate unused files in `app:update` task.
 
-    *Annie-Claude Côté*
+  Skip the assets' initializer when sprockets isn't loaded.
 
-*   Deprecate `rails notes` subcommands in favor of passing an `annotations` argument to `rails notes`.
+  Skip `config/spring.rb` when spring isn't loaded.
 
-    The following subcommands are replaced by passing `--annotations` or `-a` to `rails notes`:
-    - `rails notes:custom ANNOTATION=custom` is deprecated in favor of using `rails notes -a custom`.
-    - `rails notes:optimize` is deprecated in favor of using `rails notes -a OPTIMIZE`.
-    - `rails notes:todo` is deprecated in favor of  using`rails notes -a TODO`.
-    - `rails notes:fixme` is deprecated in favor of using `rails notes -a FIXME`.
+  Skip yarn's contents when yarn integration isn't used.
 
-    *Annie-Claude Côté*
+  _Tsukuru Tanimichi_
 
-*   Deprecate `SOURCE_ANNOTATION_DIRECTORIES` environment variable used by `rails notes`
-    through `Rails::SourceAnnotationExtractor::Annotation` in favor of using `config.annotations.register_directories`.
+- Make the master.key file read-only for the owner upon generation on
+  POSIX-compliant systems.
 
-    *Annie-Claude Côté*
+  Previously:
 
-*   Deprecate `rake notes` in favor of `rails notes`.
+      $ ls -l config/master.key
+      -rw-r--r--   1 owner  group      32 Jan 1 00:00 master.key
 
-    *Annie-Claude Côté*
+  Now:
 
-*   Don't generate unused files in `app:update` task.
+      $ ls -l config/master.key
+      -rw-------   1 owner  group      32 Jan 1 00:00 master.key
 
-    Skip the assets' initializer when sprockets isn't loaded.
+  Fixes #32604.
 
-    Skip `config/spring.rb` when spring isn't loaded.
+  _Jose Luis Duran_
 
-    Skip yarn's contents when yarn integration isn't used.
+- Deprecate support for using the `HOST` environment variable to specify the server IP.
 
-    *Tsukuru Tanimichi*
+  The `BINDING` environment variable should be used instead.
 
-*   Make the master.key file read-only for the owner upon generation on
-    POSIX-compliant systems.
+  Fixes #29516.
 
-    Previously:
+  _Yuji Yaginuma_
 
-        $ ls -l config/master.key
-        -rw-r--r--   1 owner  group      32 Jan 1 00:00 master.key
+- Deprecate passing Rack server name as a regular argument to `rails server`.
 
-    Now:
+  Previously:
 
-        $ ls -l config/master.key
-        -rw-------   1 owner  group      32 Jan 1 00:00 master.key
+      $ bin/rails server thin
 
-    Fixes #32604.
+  There wasn't an explicit option for the Rack server to use, now we have the
+  `--using` option with the `-u` short switch.
 
-    *Jose Luis Duran*
+  Now:
 
-*   Deprecate support for using the `HOST` environment variable to specify the server IP.
+      $ bin/rails server -u thin
 
-    The `BINDING` environment variable should be used instead.
+  This change also improves the error message if a missing or mistyped rack
+  server is given.
 
-    Fixes #29516.
+  _Genadi Samokovarov_
 
-    *Yuji Yaginuma*
+- Add "rails routes --expanded" option to output routes in expanded mode like
+  "psql --expanded". Result looks like:
 
-*   Deprecate passing Rack server name as a regular argument to `rails server`.
+  ```
+  $ rails routes --expanded
+  --[ Route 1 ]------------------------------------------------------------
+  Prefix            | high_scores
+  Verb              | GET
+  URI               | /high_scores(.:format)
+  Controller#Action | high_scores#index
+  --[ Route 2 ]------------------------------------------------------------
+  Prefix            | new_high_score
+  Verb              | GET
+  URI               | /high_scores/new(.:format)
+  Controller#Action | high_scores#new
+  ```
 
-    Previously:
+  _Benoit Tigeot_
 
-        $ bin/rails server thin
+- Rails 6 requires Ruby 2.5.0 or newer.
 
-    There wasn't an explicit option for the Rack server to use, now we have the
-    `--using` option with the `-u` short switch.
-
-    Now:
-
-        $ bin/rails server -u thin
-
-    This change also improves the error message if a missing or mistyped rack
-    server is given.
-
-    *Genadi Samokovarov*
-
-*   Add "rails routes --expanded" option to output routes in expanded mode like
-    "psql --expanded". Result looks like:
-
-    ```
-    $ rails routes --expanded
-    --[ Route 1 ]------------------------------------------------------------
-    Prefix            | high_scores
-    Verb              | GET
-    URI               | /high_scores(.:format)
-    Controller#Action | high_scores#index
-    --[ Route 2 ]------------------------------------------------------------
-    Prefix            | new_high_score
-    Verb              | GET
-    URI               | /high_scores/new(.:format)
-    Controller#Action | high_scores#new
-    ```
-
-    *Benoit Tigeot*
-
-*   Rails 6 requires Ruby 2.5.0 or newer.
-
-    *Jeremy Daer*, *Kasper Timm Hansen*
-
+  _Jeremy Daer_, _Kasper Timm Hansen_
 
 Please check [5-2-stable](https://github.com/rails/rails/blob/5-2-stable/railties/CHANGELOG.md) for previous changes.

@@ -1,203 +1,191 @@
-## Rails 6.0.3.2 (June 17, 2020) ##
+## Rails 6.0.3.2 (June 17, 2020)
 
-*   No changes.
+- No changes.
 
+## Rails 6.0.3.1 (May 18, 2020)
 
-## Rails 6.0.3.1 (May 18, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.3 (May 06, 2020)
 
+- While using `perform_enqueued_jobs` test helper enqueued jobs must be stored for the later check with
+  `assert_enqueued_with`.
 
-## Rails 6.0.3 (May 06, 2020) ##
+  _Dmitry Polushkin_
 
-*   While using `perform_enqueued_jobs` test helper enqueued jobs must be stored for the later check with
-    `assert_enqueued_with`.
+- Add queue name support to Que adapter
 
-    *Dmitry Polushkin*
+  _Brad Nauta_, _Wojciech Wnętrzak_
 
-*   Add queue name support to Que adapter
+## Rails 6.0.2.2 (March 19, 2020)
 
-    *Brad Nauta*, *Wojciech Wnętrzak*
+- No changes.
 
+## Rails 6.0.3.2 (December 18, 2019)
 
-## Rails 6.0.2.2 (March 19, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.2 (December 13, 2019)
 
+- Allow Sidekiq access to the underlying job class.
 
-## Rails 6.0.2.1 (December 18, 2019) ##
+  By having access to the Active Job class, Sidekiq can get access to any `sidekiq_options` which
+  have been set on that Active Job type and serialize those options into Redis.
 
-*   No changes.
+  https://github.com/mperham/sidekiq/blob/master/Changes.md#60
 
+  _Mike Perham_
 
-## Rails 6.0.2 (December 13, 2019) ##
+## Rails 6.0.1 (November 5, 2019)
 
-*   Allow Sidekiq access to the underlying job class.
+- No changes.
 
-    By having access to the Active Job class, Sidekiq can get access to any `sidekiq_options` which
-    have been set on that Active Job type and serialize those options into Redis.
+## Rails 6.0.0 (August 16, 2019)
 
-    https://github.com/mperham/sidekiq/blob/master/Changes.md#60
+- `assert_enqueued_with` and `assert_performed_with` can now test jobs with relative delay.
 
-    *Mike Perham*
+  _Vlado Cingel_
 
+## Rails 6.0.0.rc2 (July 22, 2019)
 
-## Rails 6.0.1 (November 5, 2019) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.0.rc1 (April 24, 2019)
 
+- Use individual execution counters when calculating retry delay.
 
-## Rails 6.0.0 (August 16, 2019) ##
+  _Patrik Bóna_
 
-*   `assert_enqueued_with` and `assert_performed_with` can now test jobs with relative delay.
+- Make job argument assertions with `Time`, `ActiveSupport::TimeWithZone`, and `DateTime` work by dropping microseconds. Microsecond precision is lost during serialization.
 
-    *Vlado Cingel*
+  _Gannon McGibbon_
 
+## Rails 6.0.0.beta3 (March 11, 2019)
 
-## Rails 6.0.0.rc2 (July 22, 2019) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.0.beta2 (February 25, 2019)
 
+- No changes.
 
-## Rails 6.0.0.rc1 (April 24, 2019) ##
+## Rails 6.0.0.beta1 (January 18, 2019)
 
-*   Use individual execution counters when calculating retry delay.
+- Return false instead of the job instance when `enqueue` is aborted.
 
-    *Patrik Bóna*
+  This will be the behavior in Rails 6.1 but it can be controlled now with
+  `config.active_job.return_false_on_aborted_enqueue`.
 
-*   Make job argument assertions with `Time`, `ActiveSupport::TimeWithZone`, and `DateTime` work by dropping microseconds. Microsecond precision is lost during serialization.
+  _Kir Shatrov_
 
-    *Gannon McGibbon*
+- Keep executions for each specific declaration
 
+  Each `retry_on` declaration has now its own specific executions counter. Before it was
+  shared between all executions of a job.
 
-## Rails 6.0.0.beta3 (March 11, 2019) ##
+  _Alberto Almagro_
 
-*   No changes.
+- Allow all assertion helpers that have a `only` and `except` keyword to accept
+  Procs.
 
+  _Edouard Chin_
 
-## Rails 6.0.0.beta2 (February 25, 2019) ##
+- Restore `HashWithIndifferentAccess` support to `ActiveJob::Arguments.deserialize`.
 
-*   No changes.
+  _Gannon McGibbon_
 
+- Include deserialized arguments in job instances returned from
+  `assert_enqueued_with` and `assert_performed_with`
 
-## Rails 6.0.0.beta1 (January 18, 2019) ##
+  _Alan Wu_
 
-*   Return false instead of the job instance when `enqueue` is aborted.
+- Allow `assert_enqueued_with`/`assert_performed_with` methods to accept
+  a proc for the `args` argument. This is useful to check if only a subset of arguments
+  matches your expectations.
 
-    This will be the behavior in Rails 6.1 but it can be controlled now with
-    `config.active_job.return_false_on_aborted_enqueue`.
+  _Edouard Chin_
 
-    *Kir Shatrov*
+- `ActionDispatch::IntegrationTest` includes `ActiveJob::TestHelper` module by default.
 
-*   Keep executions for each specific declaration
+  _Ricardo Díaz_
 
-    Each `retry_on` declaration has now its own specific executions counter. Before it was
-    shared between all executions of a job.
+- Added `enqueue_retry.active_job`, `retry_stopped.active_job`, and `discard.active_job` hooks.
 
-    *Alberto Almagro*
+  _steves_
 
-*   Allow all assertion helpers that have a `only` and `except` keyword to accept
-    Procs.
+- Allow `assert_performed_with` to be called without a block.
 
-    *Edouard Chin*
+  _bogdanvlviv_
 
-*   Restore `HashWithIndifferentAccess` support to `ActiveJob::Arguments.deserialize`.
+- Execution of `assert_performed_jobs`, and `assert_no_performed_jobs`
+  without a block should respect passed `:except`, `:only`, and `:queue` options.
 
-    *Gannon McGibbon*
+  _bogdanvlviv_
 
-*   Include deserialized arguments in job instances returned from
-    `assert_enqueued_with` and `assert_performed_with`
+- Allow `:queue` option to job assertions and helpers.
 
-    *Alan Wu*
+  _bogdanvlviv_
 
-*   Allow `assert_enqueued_with`/`assert_performed_with` methods to accept
-    a proc for the `args` argument. This is useful to check if only a subset of arguments
-    matches your expectations.
+- Allow `perform_enqueued_jobs` to be called without a block.
 
-    *Edouard Chin*
+  Performs all of the jobs that have been enqueued up to this point in the test.
 
-*   `ActionDispatch::IntegrationTest` includes `ActiveJob::TestHelper` module by default.
+  _Kevin Deisz_
 
-    *Ricardo Díaz*
+- Move `enqueue`/`enqueue_at` notifications to an around callback.
 
-*   Added `enqueue_retry.active_job`, `retry_stopped.active_job`, and `discard.active_job` hooks.
+  Improves timing accuracy over the old after callback by including
+  time spent writing to the adapter's IO implementation.
 
-    *steves*
+  _Zach Kemp_
 
-*   Allow `assert_performed_with` to be called without a block.
+- Allow call `assert_enqueued_with` with no block.
 
-    *bogdanvlviv*
+  Example:
 
-*   Execution of `assert_performed_jobs`, and `assert_no_performed_jobs`
-    without a block should respect passed `:except`, `:only`, and `:queue` options.
+  ```
+  def test_assert_enqueued_with
+    MyJob.perform_later(1,2,3)
+    assert_enqueued_with(job: MyJob, args: [1,2,3], queue: 'low')
 
-    *bogdanvlviv*
+    MyJob.set(wait_until: Date.tomorrow.noon).perform_later
+    assert_enqueued_with(job: MyJob, at: Date.tomorrow.noon)
+  end
+  ```
 
-*   Allow `:queue` option to job assertions and helpers.
+  _bogdanvlviv_
 
-    *bogdanvlviv*
+- Allow passing multiple exceptions to `retry_on`, and `discard_on`.
 
-*   Allow `perform_enqueued_jobs` to be called without a block.
+  _George Claghorn_
 
-    Performs all of the jobs that have been enqueued up to this point in the test.
+- Pass the error instance as the second parameter of block executed by `discard_on`.
 
-    *Kevin Deisz*
+  Fixes #32853.
 
-*   Move `enqueue`/`enqueue_at` notifications to an around callback.
+  _Yuji Yaginuma_
 
-    Improves timing accuracy over the old after callback by including
-    time spent writing to the adapter's IO implementation.
+- Remove support for Qu gem.
 
-    *Zach Kemp*
+  Reasons are that the Qu gem wasn't compatible since Rails 5.1,
+  gem development was stopped in 2014 and maintainers have
+  confirmed its demise. See issue #32273
 
-*   Allow call `assert_enqueued_with` with no block.
+  _Alberto Almagro_
 
-    Example:
-    ```
-    def test_assert_enqueued_with
-      MyJob.perform_later(1,2,3)
-      assert_enqueued_with(job: MyJob, args: [1,2,3], queue: 'low')
+- Add support for timezones to Active Job.
 
-      MyJob.set(wait_until: Date.tomorrow.noon).perform_later
-      assert_enqueued_with(job: MyJob, at: Date.tomorrow.noon)
-    end
-    ```
+  Record what was the current timezone in effect when the job was
+  enqueued and then restore when the job is executed in same way
+  that the current locale is recorded and restored.
 
-    *bogdanvlviv*
+  _Andrew White_
 
-*   Allow passing multiple exceptions to `retry_on`, and `discard_on`.
+- Rails 6 requires Ruby 2.5.0 or newer.
 
-    *George Claghorn*
+  _Jeremy Daer_, _Kasper Timm Hansen_
 
-*   Pass the error instance as the second parameter of block executed by `discard_on`.
+- Add support to define custom argument serializers.
 
-    Fixes #32853.
-
-    *Yuji Yaginuma*
-
-*   Remove support for Qu gem.
-
-    Reasons are that the Qu gem wasn't compatible since Rails 5.1,
-    gem development was stopped in 2014 and maintainers have
-    confirmed its demise. See issue #32273
-
-    *Alberto Almagro*
-
-*   Add support for timezones to Active Job.
-
-    Record what was the current timezone in effect when the job was
-    enqueued and then restore when the job is executed in same way
-    that the current locale is recorded and restored.
-
-    *Andrew White*
-
-*   Rails 6 requires Ruby 2.5.0 or newer.
-
-    *Jeremy Daer*, *Kasper Timm Hansen*
-
-*   Add support to define custom argument serializers.
-
-    *Evgenii Pecherkin*, *Rafael Mendonça França*
-
+  _Evgenii Pecherkin_, _Rafael Mendonça França_
 
 Please check [5-2-stable](https://github.com/rails/rails/blob/5-2-stable/activejob/CHANGELOG.md) for previous changes.

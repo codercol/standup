@@ -1,376 +1,365 @@
-## Rails 6.0.3.2 (June 17, 2020) ##
+## Rails 6.0.3.2 (June 17, 2020)
 
-*   [CVE-2020-8185] Only allow ActionableErrors if show_detailed_exceptions is enabled
+- [CVE-2020-8185] Only allow ActionableErrors if show_detailed_exceptions is enabled
 
-## Rails 6.0.3.1 (May 18, 2020) ##
+## Rails 6.0.3.1 (May 18, 2020)
 
-*   [CVE-2020-8166] HMAC raw CSRF token before masking it, so it cannot be used to reconstruct a per-form token
+- [CVE-2020-8166] HMAC raw CSRF token before masking it, so it cannot be used to reconstruct a per-form token
 
-*   [CVE-2020-8164] Return self when calling #each, #each_pair, and #each_value instead of the raw @parameters hash
+- [CVE-2020-8164] Return self when calling #each, #each_pair, and #each_value instead of the raw @parameters hash
 
-## Rails 6.0.3 (May 06, 2020) ##
+## Rails 6.0.3 (May 06, 2020)
 
-*   Include child session assertion count in ActionDispatch::IntegrationTest
+- Include child session assertion count in ActionDispatch::IntegrationTest
 
-    `IntegrationTest#open_session` uses `dup` to create the new session, which
-    meant it had its own copy of `@assertions`. This prevented the assertions
-    from being correctly counted and reported.
+  `IntegrationTest#open_session` uses `dup` to create the new session, which
+  meant it had its own copy of `@assertions`. This prevented the assertions
+  from being correctly counted and reported.
 
-    Child sessions now have their `attr_accessor` overriden to delegate to the
-    root session.
+  Child sessions now have their `attr_accessor` overriden to delegate to the
+  root session.
 
-    Fixes #32142
+  Fixes #32142
 
-    *Sam Bostock*
+  _Sam Bostock_
 
+## Rails 6.0.2.2 (March 19, 2020)
 
-## Rails 6.0.2.2 (March 19, 2020) ##
+- No changes.
 
-*   No changes.
+## Rails 6.0.3.2 (December 18, 2019)
 
+- Fix possible information leak / session hijacking vulnerability.
 
-## Rails 6.0.2.1 (December 18, 2019) ##
+  The `ActionDispatch::Session::MemcacheStore` is still vulnerable given it requires the
+  gem dalli to be updated as well.
 
-*   Fix possible information leak / session hijacking vulnerability.
+  CVE-2019-16782.
 
-    The `ActionDispatch::Session::MemcacheStore` is still vulnerable given it requires the
-    gem dalli to be updated as well.
+## Rails 6.0.2 (December 13, 2019)
 
-    CVE-2019-16782.
+- Allow using mountable engine route helpers in System Tests.
 
+  _Chalo Fernandez_
 
-## Rails 6.0.2 (December 13, 2019) ##
+## Rails 6.0.1 (November 5, 2019)
 
-*   Allow using mountable engine route helpers in System Tests.
+- `ActionDispatch::SystemTestCase` now inherits from `ActiveSupport::TestCase`
+  rather than `ActionDispatch::IntegrationTest`. This permits running jobs in
+  system tests.
 
-    *Chalo Fernandez*
+  _George Claghorn_, _Edouard Chin_
 
+- Registered MIME types may contain extra flags:
 
-## Rails 6.0.1 (November 5, 2019) ##
+  ```ruby
+  Mime::Type.register "text/html; fragment", :html_fragment
+  ```
 
-*   `ActionDispatch::SystemTestCase` now inherits from `ActiveSupport::TestCase`
-    rather than `ActionDispatch::IntegrationTest`. This permits running jobs in
-    system tests.
+  _Aaron Patterson_
 
-    *George Claghorn*, *Edouard Chin*
+## Rails 6.0.0 (August 16, 2019)
 
-*   Registered MIME types may contain extra flags:
+- No changes.
 
-    ```ruby
-    Mime::Type.register "text/html; fragment", :html_fragment
-    ```
+## Rails 6.0.0.rc2 (July 22, 2019)
 
-    *Aaron Patterson*
+- Add the ability to set the CSP nonce only to the specified directives.
 
+  Fixes #35137.
 
-## Rails 6.0.0 (August 16, 2019) ##
+  _Yuji Yaginuma_
 
-*   No changes.
+- Keep part when scope option has value.
 
+  When a route was defined within an optional scope, if that route didn't
+  take parameters the scope was lost when using path helpers. This commit
+  ensures scope is kept both when the route takes parameters or when it
+  doesn't.
 
-## Rails 6.0.0.rc2 (July 22, 2019) ##
+  Fixes #33219
 
-*   Add the ability to set the CSP nonce only to the specified directives.
+  _Alberto Almagro_
 
-    Fixes #35137.
+- Change `ActionDispatch::Response#content_type` to return Content-Type header as it is.
 
-    *Yuji Yaginuma*
+  Previously, `ActionDispatch::Response#content_type` returned value does NOT
+  contain charset part. This behavior changed to returned Content-Type header
+  containing charset part as it is.
 
-*   Keep part when scope option has value.
+  If you want just MIME type, please use `ActionDispatch::Response#media_type`
+  instead.
 
-    When a route was defined within an optional scope, if that route didn't
-    take parameters the scope was lost when using path helpers. This commit
-    ensures scope is kept both when the route takes parameters or when it
-    doesn't.
+  Enable `action_dispatch.return_only_media_type_on_content_type` to use this change.
+  If not enabled, `ActionDispatch::Response#content_type` returns the same
+  value as before version, but its behavior is deprecate.
 
-    Fixes #33219
+  _Yuji Yaginuma_
 
-    *Alberto Almagro*
+- Calling `ActionController::Parameters#transform_keys/!` without a block now returns
+  an enumerator for the parameters instead of the underlying hash.
 
-*   Change `ActionDispatch::Response#content_type` to return Content-Type header as it is.
+  _Eugene Kenny_
 
-    Previously, `ActionDispatch::Response#content_type` returned value does NOT
-    contain charset part. This behavior changed to returned Content-Type header
-    containing charset part as it is.
+- Fix a bug where DebugExceptions throws an error when malformed query parameters are provided
 
-    If you want just MIME type, please use `ActionDispatch::Response#media_type`
-    instead.
+  _Yuki Nishijima_, _Stan Lo_
 
-    Enable `action_dispatch.return_only_media_type_on_content_type` to use this change.
-    If not enabled, `ActionDispatch::Response#content_type` returns the same
-    value as before version, but its behavior is deprecate.
+## Rails 6.0.0.rc1 (April 24, 2019)
 
-    *Yuji Yaginuma*
+- Make system tests take a failed screenshot in a `before_teardown` hook
+  rather than an `after_teardown` hook.
 
-*   Calling `ActionController::Parameters#transform_keys/!` without a block now returns
-    an enumerator for the parameters instead of the underlying hash.
+  This helps minimize the time gap between when an assertion fails and when
+  the screenshot is taken (reducing the time in which the page could have
+  been dynamically updated after the assertion failed).
 
-    *Eugene Kenny*
+  _Richard Macklin_
 
-*   Fix a bug where DebugExceptions throws an error when malformed query parameters are provided
+- Introduce `ActionDispatch::ActionableExceptions`.
 
-    *Yuki Nishijima*, *Stan Lo*
+  The `ActionDispatch::ActionableExceptions` middleware dispatches actions
+  from `ActiveSupport::ActionableError` descendants.
 
+  Actionable errors let's you dispatch actions from Rails' error pages.
 
-## Rails 6.0.0.rc1 (April 24, 2019) ##
+  _Vipul A M_, _Yao Jie_, _Genadi Samokovarov_
 
-*   Make system tests take a failed screenshot in a `before_teardown` hook
-    rather than an `after_teardown` hook.
+- Raise an `ArgumentError` if a resource custom param contains a colon (`:`).
 
-    This helps minimize the time gap between when an assertion fails and when
-    the screenshot is taken (reducing the time in which the page could have
-    been dynamically updated after the assertion failed).
+  After this change it's not possible anymore to configure routes like this:
 
-    *Richard Macklin*
+  ```
+  routes.draw do
+    resources :users, param: 'name/:sneaky'
+  end
+  ```
 
-*   Introduce `ActionDispatch::ActionableExceptions`.
+  Fixes #30467.
 
-    The `ActionDispatch::ActionableExceptions` middleware dispatches actions
-    from `ActiveSupport::ActionableError` descendants.
+  _Josua Schmid_
 
-    Actionable errors let's you dispatch actions from Rails' error pages.
+## Rails 6.0.0.beta3 (March 11, 2019)
 
-    *Vipul A M*, *Yao Jie*, *Genadi Samokovarov*
+- No changes.
 
-*   Raise an `ArgumentError` if a resource custom param contains a colon (`:`).
+## Rails 6.0.0.beta2 (February 25, 2019)
 
-    After this change it's not possible anymore to configure routes like this:
+- Make debug exceptions works in an environment where ActiveStorage is not loaded.
 
-    ```
-    routes.draw do
-      resources :users, param: 'name/:sneaky'
+  _Tomoyuki Kurosawa_
+
+- `ActionDispatch::SystemTestCase.driven_by` can now be called with a block
+  to define specific browser capabilities.
+
+  _Edouard Chin_
+
+## Rails 6.0.0.beta1 (January 18, 2019)
+
+- Remove deprecated `fragment_cache_key` helper in favor of `combined_fragment_cache_key`.
+
+  _Rafael Mendonça França_
+
+- Remove deprecated methods in `ActionDispatch::TestResponse`.
+
+  `#success?`, `missing?` and `error?` were deprecated in Rails 5.2 in favor of
+  `#successful?`, `not_found?` and `server_error?`.
+
+  _Rafael Mendonça França_
+
+- Introduce `ActionDispatch::HostAuthorization`.
+
+  This is a new middleware that guards against DNS rebinding attacks by
+  explicitly permitting the hosts a request can be made to.
+
+  Each host is checked with the case operator (`#===`) to support `Regexp`,
+  `Proc`, `IPAddr` and custom objects as host allowances.
+
+  _Genadi Samokovarov_
+
+- Allow using `parsed_body` in `ActionController::TestCase`.
+
+  In addition to `ActionDispatch::IntegrationTest`, allow using
+  `parsed_body` in `ActionController::TestCase`:
+
+  ```
+  class SomeControllerTest < ActionController::TestCase
+    def test_some_action
+      post :action, body: { foo: 'bar' }
+      assert_equal({ "foo" => "bar" }, response.parsed_body)
     end
-    ```
+  end
+  ```
 
-    Fixes #30467.
+  Fixes #34676.
 
-    *Josua Schmid*
+  _Tobias Bühlmann_
 
+- Raise an error on root route naming conflicts.
 
-## Rails 6.0.0.beta3 (March 11, 2019) ##
+  Raises an `ArgumentError` when multiple root routes are defined in the
+  same context instead of assigning nil names to subsequent roots.
 
-*   No changes.
+  _Gannon McGibbon_
 
+- Allow rescue from parameter parse errors:
 
-## Rails 6.0.0.beta2 (February 25, 2019) ##
+  ```
+  rescue_from ActionDispatch::Http::Parameters::ParseError do
+    head :unauthorized
+  end
+  ```
 
-*   Make debug exceptions works in an environment where ActiveStorage is not loaded.
+  _Gannon McGibbon_, _Josh Cheek_
 
-    *Tomoyuki Kurosawa*
+- Reset Capybara sessions if failed system test screenshot raising an exception.
 
-*   `ActionDispatch::SystemTestCase.driven_by` can now be called with a block
-    to define specific browser capabilities.
+  Reset Capybara sessions if `take_failed_screenshot` raise exception
+  in system test `after_teardown`.
 
-    *Edouard Chin*
+  _Maxim Perepelitsa_
 
+- Use request object for context if there's no controller
 
-## Rails 6.0.0.beta1 (January 18, 2019) ##
+  There is no controller instance when using a redirect route or a
+  mounted rack application so pass the request object as the context
+  when resolving dynamic CSP sources in this scenario.
 
-*   Remove deprecated `fragment_cache_key` helper in favor of `combined_fragment_cache_key`.
+  Fixes #34200.
 
-    *Rafael Mendonça França*
+  _Andrew White_
 
-*   Remove deprecated methods in `ActionDispatch::TestResponse`.
+- Apply mapping to symbols returned from dynamic CSP sources
 
-    `#success?`, `missing?` and `error?` were deprecated in Rails 5.2 in favor of
-    `#successful?`, `not_found?` and `server_error?`.
+  Previously if a dynamic source returned a symbol such as :self it
+  would be converted to a string implicitly, e.g:
 
-    *Rafael Mendonça França*
+      policy.default_src -> { :self }
 
-*   Introduce `ActionDispatch::HostAuthorization`.
+  would generate the header:
 
-    This is a new middleware that guards against DNS rebinding attacks by
-    explicitly permitting the hosts a request can be made to.
+      Content-Security-Policy: default-src self
 
-    Each host is checked with the case operator (`#===`) to support `Regexp`,
-    `Proc`, `IPAddr` and custom objects as host allowances.
+  and now it generates:
 
-    *Genadi Samokovarov*
+      Content-Security-Policy: default-src 'self'
 
-*   Allow using `parsed_body` in `ActionController::TestCase`.
+  _Andrew White_
 
-    In addition to `ActionDispatch::IntegrationTest`, allow using
-    `parsed_body` in `ActionController::TestCase`:
+- Add `ActionController::Parameters#each_value`.
 
-    ```
-    class SomeControllerTest < ActionController::TestCase
-      def test_some_action
-        post :action, body: { foo: 'bar' }
-        assert_equal({ "foo" => "bar" }, response.parsed_body)
-      end
-    end
-    ```
+  _Lukáš Zapletal_
 
-    Fixes #34676.
+- Deprecate `ActionDispatch::Http::ParameterFilter` in favor of `ActiveSupport::ParameterFilter`.
 
-    *Tobias Bühlmann*
+  _Yoshiyuki Kinjo_
 
-*   Raise an error on root route naming conflicts.
+- Encode Content-Disposition filenames on `send_data` and `send_file`.
+  Previously, `send_data 'data', filename: "\u{3042}.txt"` sends
+  `"filename=\"\u{3042}.txt\""` as Content-Disposition and it can be
+  garbled.
+  Now it follows [RFC 2231](https://tools.ietf.org/html/rfc2231) and
+  [RFC 5987](https://tools.ietf.org/html/rfc5987) and sends
+  `"filename=\"%3F.txt\"; filename*=UTF-8''%E3%81%82.txt"`.
+  Most browsers can find filename correctly and old browsers fallback to ASCII
+  converted name.
 
-    Raises an `ArgumentError` when multiple root routes are defined in the
-    same context instead of assigning nil names to subsequent roots.
+  _Fumiaki Matsushima_
 
-    *Gannon McGibbon*
+- Expose `ActionController::Parameters#each_key` which allows iterating over
+  keys without allocating an array.
 
-*   Allow rescue from parameter parse errors:
+  _Richard Schneeman_
 
-    ```
-    rescue_from ActionDispatch::Http::Parameters::ParseError do
-      head :unauthorized
-    end
-    ```
+- Purpose metadata for signed/encrypted cookies.
 
-    *Gannon McGibbon*, *Josh Cheek*
+  Rails can now thwart attacks that attempt to copy signed/encrypted value
+  of a cookie and use it as the value of another cookie.
 
-*   Reset Capybara sessions if failed system test screenshot raising an exception.
+  It does so by stashing the cookie-name in the purpose field which is
+  then signed/encrypted along with the cookie value. Then, on a server-side
+  read, we verify the cookie-names and discard any attacked cookies.
 
-    Reset Capybara sessions if `take_failed_screenshot` raise exception
-    in system test `after_teardown`.
+  Enable `action_dispatch.use_cookies_with_metadata` to use this feature, which
+  writes cookies with the new purpose and expiry metadata embedded.
 
-    *Maxim Perepelitsa*
+  _Assain Jaleel_
 
-*   Use request object for context if there's no controller
+- Raises `ActionController::RespondToMismatchError` with conflicting `respond_to` invocations.
 
-    There is no controller instance when using a redirect route or a
-    mounted rack application so pass the request object as the context
-    when resolving dynamic CSP sources in this scenario.
-
-    Fixes #34200.
-
-    *Andrew White*
-
-*   Apply mapping to symbols returned from dynamic CSP sources
-
-    Previously if a dynamic source returned a symbol such as :self it
-    would be converted to a string implicitly, e.g:
-
-        policy.default_src -> { :self }
-
-    would generate the header:
-
-        Content-Security-Policy: default-src self
-
-    and now it generates:
-
-        Content-Security-Policy: default-src 'self'
-
-    *Andrew White*
-
-*   Add `ActionController::Parameters#each_value`.
-
-    *Lukáš Zapletal*
-
-*   Deprecate `ActionDispatch::Http::ParameterFilter` in favor of `ActiveSupport::ParameterFilter`.
-
-    *Yoshiyuki Kinjo*
-
-*   Encode Content-Disposition filenames on `send_data` and `send_file`.
-    Previously, `send_data 'data', filename: "\u{3042}.txt"` sends
-    `"filename=\"\u{3042}.txt\""` as Content-Disposition and it can be
-    garbled.
-    Now it follows [RFC 2231](https://tools.ietf.org/html/rfc2231) and
-    [RFC 5987](https://tools.ietf.org/html/rfc5987) and sends
-    `"filename=\"%3F.txt\"; filename*=UTF-8''%E3%81%82.txt"`.
-    Most browsers can find filename correctly and old browsers fallback to ASCII
-    converted name.
-
-    *Fumiaki Matsushima*
-
-*   Expose `ActionController::Parameters#each_key` which allows iterating over
-    keys without allocating an array.
-
-    *Richard Schneeman*
-
-*   Purpose metadata for signed/encrypted cookies.
-
-    Rails can now thwart attacks that attempt to copy signed/encrypted value
-    of a cookie and use it as the value of another cookie.
-
-    It does so by stashing the cookie-name in the purpose field which is
-    then signed/encrypted along with the cookie value. Then, on a server-side
-    read, we verify the cookie-names and discard any attacked cookies.
-
-    Enable `action_dispatch.use_cookies_with_metadata` to use this feature, which
-    writes cookies with the new purpose and expiry metadata embedded.
-
-    *Assain Jaleel*
-
-*   Raises `ActionController::RespondToMismatchError` with conflicting `respond_to` invocations.
-
-    `respond_to` can match multiple types and lead to undefined behavior when
-    multiple invocations are made and the types do not match:
-
-        respond_to do |outer_type|
-          outer_type.js do
-            respond_to do |inner_type|
-              inner_type.html { render body: "HTML" }
-            end
+  `respond_to` can match multiple types and lead to undefined behavior when
+  multiple invocations are made and the types do not match:
+
+      respond_to do |outer_type|
+        outer_type.js do
+          respond_to do |inner_type|
+            inner_type.html { render body: "HTML" }
           end
         end
+      end
 
-    *Patrick Toomey*
+  _Patrick Toomey_
 
-*   `ActionDispatch::Http::UploadedFile` now delegates `to_path` to its tempfile.
+- `ActionDispatch::Http::UploadedFile` now delegates `to_path` to its tempfile.
 
-    This allows uploaded file objects to be passed directly to `File.read`
-    without raising a `TypeError`:
+  This allows uploaded file objects to be passed directly to `File.read`
+  without raising a `TypeError`:
 
-        uploaded_file = ActionDispatch::Http::UploadedFile.new(tempfile: tmp_file)
-        File.read(uploaded_file)
+      uploaded_file = ActionDispatch::Http::UploadedFile.new(tempfile: tmp_file)
+      File.read(uploaded_file)
 
-    *Aaron Kromer*
+  _Aaron Kromer_
 
-*   Pass along arguments to underlying `get` method in `follow_redirect!`
+- Pass along arguments to underlying `get` method in `follow_redirect!`
 
-    Now all arguments passed to `follow_redirect!` are passed to the underlying
-    `get` method. This for example allows to set custom headers for the
-    redirection request to the server.
+  Now all arguments passed to `follow_redirect!` are passed to the underlying
+  `get` method. This for example allows to set custom headers for the
+  redirection request to the server.
 
-        follow_redirect!(params: { foo: :bar })
+      follow_redirect!(params: { foo: :bar })
 
-    *Remo Fritzsche*
+  _Remo Fritzsche_
 
-*   Introduce a new error page to when the implicit render page is accessed in the browser.
+- Introduce a new error page to when the implicit render page is accessed in the browser.
 
-    Now instead of showing an error page that with exception and backtraces we now show only
-    one informative page.
+  Now instead of showing an error page that with exception and backtraces we now show only
+  one informative page.
 
-    *Vinicius Stock*
+  _Vinicius Stock_
 
-*   Introduce `ActionDispatch::DebugExceptions.register_interceptor`.
+- Introduce `ActionDispatch::DebugExceptions.register_interceptor`.
 
-    Exception aware plugin authors can use the newly introduced
-    `.register_interceptor` method to get the processed exception, instead of
-    monkey patching DebugExceptions.
+  Exception aware plugin authors can use the newly introduced
+  `.register_interceptor` method to get the processed exception, instead of
+  monkey patching DebugExceptions.
 
-        ActionDispatch::DebugExceptions.register_interceptor do |request, exception|
-          HypoteticalPlugin.capture_exception(request, exception)
-        end
+      ActionDispatch::DebugExceptions.register_interceptor do |request, exception|
+        HypoteticalPlugin.capture_exception(request, exception)
+      end
 
-    *Genadi Samokovarov*
+  _Genadi Samokovarov_
 
-*   Output only one Content-Security-Policy nonce header value per request.
+- Output only one Content-Security-Policy nonce header value per request.
 
-    Fixes #32597.
+  Fixes #32597.
 
-    *Andrey Novikov*, *Andrew White*
+  _Andrey Novikov_, _Andrew White_
 
-*   Move default headers configuration into their own module that can be included in controllers.
+- Move default headers configuration into their own module that can be included in controllers.
 
-    *Kevin Deisz*
+  _Kevin Deisz_
 
-*   Add method `dig` to `session`.
+- Add method `dig` to `session`.
 
-    *claudiob*, *Takumi Shotoku*
+  _claudiob_, _Takumi Shotoku_
 
-*   Controller level `force_ssl` has been deprecated in favor of
-    `config.force_ssl`.
+- Controller level `force_ssl` has been deprecated in favor of
+  `config.force_ssl`.
 
-    *Derek Prior*
+  _Derek Prior_
 
-*   Rails 6 requires Ruby 2.5.0 or newer.
+- Rails 6 requires Ruby 2.5.0 or newer.
 
-    *Jeremy Daer*, *Kasper Timm Hansen*
-
+  _Jeremy Daer_, _Kasper Timm Hansen_
 
 Please check [5-2-stable](https://github.com/rails/rails/blob/5-2-stable/actionpack/CHANGELOG.md) for previous changes.

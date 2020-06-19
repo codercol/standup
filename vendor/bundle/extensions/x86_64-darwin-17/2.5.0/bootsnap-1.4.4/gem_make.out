@@ -1,0 +1,15 @@
+current directory: /Users/codercol/Desktop/standup/standup_app/vendor/bundle/gems/bootsnap-1.4.4/ext/bootsnap
+/Users/codercol/.rvm/rubies/ruby-2.5.5/bin/ruby -I /Users/codercol/.rvm/rubies/ruby-2.5.5/lib/ruby/site_ruby/2.5.0 -r ./siteconf20200618-36982-1bymvyx.rb extconf.rb
+creating Makefile
+
+current directory: /Users/codercol/Desktop/standup/standup_app/vendor/bundle/gems/bootsnap-1.4.4/ext/bootsnap
+make "DESTDIR=" clean
+
+current directory: /Users/codercol/Desktop/standup/standup_app/vendor/bundle/gems/bootsnap-1.4.4/ext/bootsnap
+make "DESTDIR="
+compiling bootsnap.c
+linking shared-object bootsnap/bootsnap.bundle
+
+current directory: /Users/codercol/Desktop/standup/standup_app/vendor/bundle/gems/bootsnap-1.4.4/ext/bootsnap
+make "DESTDIR=" install
+/usr/local/opt/coreutils/bin/ginstall -c -m 0755 bootsnap.bundle ./.gem.20200618-36982-1q9be4a/bootsnap
