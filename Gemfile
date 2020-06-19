@@ -15,7 +15,7 @@ gem 'turbolinks', '~> 5'
 
 gem 'redis', '~> 4.0'
 
-gem 'bootstrap', '~> 4.2.1'
+gem 'bootstrap', '~> 4.3.1'
 gem 'local_time'
 
 gem 'cancancan'
